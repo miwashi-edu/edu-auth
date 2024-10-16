@@ -10,13 +10,17 @@ mkdir -p src
 mkdir -p ./src/{routes,controller,domain}
 mkdir -p ./__tests__
 touch ./src/{config.js,app.js,service.js}
+touch ./routes/auth_routes.js
+touch ./controller/auth_controller.js
+touch ./domain/auth_handler.js
+touch .env .env.test
 ```
 
 ## Prepare Package
 
 ```bash
 npm init -y
-npm install jsonwebtoken dotenv
+npm install express jsonwebtoken dotenv
 npm install -D jest jest-runner-groups supertest
 npm pkg set scripts.start='node ./src/service.js'
 npm pkg set scripts.dev='node --watch ./src/service.js'
