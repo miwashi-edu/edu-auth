@@ -10,9 +10,8 @@ mkdir ./__tests__
 touch ./src/{config.js,app.js,service.js}
 npm install jsonwebtoken dotenv
 npm install -D jest jest-runner-groups supertest
-npm pgk set scripts.main='node ./service.js'
-npm pgk set scripts.dev='node --watch ./service.js'
-npm pgk set scripts.test='jest'
+npm pkg set scripts.main='node ./service.js'
+npm pkg set scripts.dev='node --watch ./service.js'
 npm pkg set scripts.test="jest  --group=-component --group=-integration"
 npm pkg set scripts.test:component="jest --group=component"
 npm pkg set scripts.test:integration="jest --group=integration"
