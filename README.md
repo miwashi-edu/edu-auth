@@ -18,8 +18,8 @@ touch ./src/{config.js,app.js,service.js}
 npm init -y
 npm install jsonwebtoken dotenv
 npm install -D jest jest-runner-groups supertest
-npm pkg set scripts.start='node ./service.js'
-npm pkg set scripts.dev='node --watch ./service.js'
+npm pkg set scripts.start='node ./src/service.js'
+npm pkg set scripts.dev='node --watch ./src/service.js'
 npm pkg set scripts.test="jest  --group=-component --group=-integration"
 npm pkg set scripts.test:component="jest --group=component"
 npm pkg set scripts.test:integration="jest --group=integration"
