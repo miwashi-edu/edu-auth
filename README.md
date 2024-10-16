@@ -30,15 +30,26 @@ npm pkg set scripts.test:integration="jest --group=integration"
 npm pkg set jest.runner="groups"
 ```
 
-## Service
+## Service <heredoc
 
 ```bash
 mkdir -p ./src
 cat > ./src/service.js << 'EOF'
+const { PORT } = require('./config');
+const app =require('./app');
+
+
+app.listen(PORT, err => {
+    if (err) {
+        console.error(`Failed to start the server: ${err}`);
+    } else {
+        console.log(`Auth Server Listening on port ${PORT}`);
+    }
+});
 EOF
 ```
 
-## Config
+## Config <heredoc
 
 ```bash
 mkdir -p ./src
@@ -46,16 +57,25 @@ cat > ./src/config.js << 'EOF'
 EOF
 ```
 
-## App
+## App <heredoc
 
 
 ```bash
 mkdir -p ./src
 cat > ./src/app.js << 'EOF'
+const express = require('express');
+const app = express();
+
+app.use(express.json());
+app.use((req,res,next)=>{
+    res.send({});
+})
+
+module.exports = app;
 EOF
 ```
 
-## Routes
+## Routes <heredoc
 
 
 ```bash
@@ -64,14 +84,14 @@ cat > ./src/routes/auth_routes.js << 'EOF'
 EOF
 ```
 
-## Controller
+## Controller <heredoc
 ```bash
 mkdir -p ./src/controller
 cat > ./src/controller/auth_controller.js << 'EOF'
 EOF
 ```
 
-## Domain
+## Domain <heredoc
 ```bash
 mkdir -p ./src/domain
 cat > ./src/domain/auth_handler.js << 'EOF'
@@ -99,7 +119,7 @@ describe('jest', () => {
 EOF
 ```
 
-### component_tests.js <dochere
+### component_tests.js <heredoc
 
 ```bash
 cat > ./__tests__/component_tests.js << 'EOF'
@@ -122,7 +142,7 @@ describe('When testing /', () => {
 EOF
 ```
 
-### integration_tests.js <docere
+### integration_tests.js <heredoc
 
 ```bash
 cat > ./__tests__/integration_tests.js << 'EOF'
