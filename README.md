@@ -6,9 +6,9 @@
 
 ```bash
 mkdir auth-server && cd auth-server
-mkdir src
-mkdir ./src/{routes,controller,domain}
-mkdir ./__tests__
+mkdir -p src
+mkdir -p ./src/{routes,controller,domain}
+mkdir -p ./__tests__
 touch ./src/{config.js,app.js,service.js}
 ```
 
@@ -26,11 +26,56 @@ npm pkg set scripts.test:integration="jest --group=integration"
 npm pkg set jest.runner="groups"
 ```
 
+## Service
+
+```bash
+mkdir -p ./src
+cat > ./src/service.js << 'EOF'
+EOF
+```
+
+## Config
+mkdir -p ./src
+cat > ./src/config.js << 'EOF'
+EOF
+
+## App
+
+
+```bash
+mkdir -p ./src
+cat > ./src/app.js << 'EOF'
+EOF
+```
+
+## Routes
+
+
+```bash
+mkdir -p ./src/routes
+cat > ./src/routes/auth_routes.js << 'EOF'
+EOF
+```
+
+## Controller
+```bash
+mkdir -p ./src/controller
+cat > ./src/controller/auth_controller.js << 'EOF'
+EOF
+```
+
+## Domain
+```bash
+mkdir -p ./src/domain
+cat > ./src/domain/auth_handler.js << 'EOF'
+EOF
+```
+
 ## Tests
 
 ### unit_tests.js <heredoc
 
-```js
+```bash
 cat > ./__tests__/unit_tests.js << 'EOF'
 /**
  * @group unit
@@ -48,7 +93,7 @@ EOF
 
 ### component_tests.js <dochere
 
-```js
+```bash
 cat > ./__tests__/component_tests.js << 'EOF'
 /**
  * @group component
@@ -66,7 +111,7 @@ EOF
 
 ### integration_tests.js <docere
 
-```js
+```bash
 cat > ./__tests__/integration_tests.js << 'EOF'
 /**
  * @group integration
