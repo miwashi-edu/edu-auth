@@ -35,9 +35,12 @@ EOF
 ```
 
 ## Config
+
+```bash
 mkdir -p ./src
 cat > ./src/config.js << 'EOF'
 EOF
+```
 
 ## App
 
