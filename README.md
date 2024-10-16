@@ -2,12 +2,20 @@
 
 # Instructions 
 
+## Prepare Project
+
 ```bash
 mkdir auth-server && cd auth-server
 mkdir src
 mkdir ./src/{routes,controller,domain}
 mkdir ./__tests__
 touch ./src/{config.js,app.js,service.js}
+```
+
+## Prepare Package
+
+```bash
+npm init -y
 npm install jsonwebtoken dotenv
 npm install -D jest jest-runner-groups supertest
 npm pkg set scripts.main='node ./service.js'
