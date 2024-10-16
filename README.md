@@ -83,10 +83,11 @@ EOF
 ### unit_tests.js <heredoc
 
 ```bash
-cat > ./__tests__/unit_tests.js << 'EOF'
 /**
  * @group unit
  */
+
+require('dotenv').config({ path: './.env.test' });
 
 describe('jest', () => {
   describe('unit test', () => {
@@ -105,11 +106,16 @@ cat > ./__tests__/component_tests.js << 'EOF'
 /**
  * @group component
  */
+require('dotenv').config({ path: './.env.test' });
+const request = require('supertest')
+const app = require('../src/app')
 
-describe('jest', () => {
-  describe('component test', () => {
-    it('should work', () => {
-      expect(true).toBe(true);
+describe('When testing /', () => {
+  describe('GET', () => {
+    it('should work', async () => {
+      const res = await request(app)
+          .get('/api/user/')
+      expect(res.statusCode).toEqual(200);
     });
   });
 });
@@ -123,13 +129,20 @@ cat > ./__tests__/integration_tests.js << 'EOF'
 /**
  * @group integration
  */
+require('dotenv').config({ path: './.env.test' });
+const request = require('supertest')
+const PORT = process.env.PORT || 3000;
+const HOST = process.env.HOST || `http://localhost:${PORT}`;
+const container = request(HOST);
 
-describe('jest', () => {
-  describe('integration test', () => {
-    it('should work', () => {
-      expect(true).toBe(true);
+describe('When testing /', () => {
+  describe('GET', () => {
+    it('should work', async () => {
+      const res = await container.get('/api/user/');
+      expect(res.statusCode).toEqual(200);
     });
   });
 });
+
 EOF
 ```
