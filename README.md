@@ -254,7 +254,7 @@ describe('When testing /', () => {
   describe('GET', () => {
     it('should work', async () => {
       const res = await request(app)
-          .get('/api/user/')
+          .get('/')
       expect(res.statusCode).toEqual(200);
     });
   });
@@ -278,7 +278,7 @@ const container = request(HOST);
 describe('When testing /', () => {
   describe('GET', () => {
     it('should work', async () => {
-      const res = await container.get('/api/user/');
+      const res = await container.get('/');
       expect(res.statusCode).toEqual(200);
     });
   });
