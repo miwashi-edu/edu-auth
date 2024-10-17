@@ -7,11 +7,11 @@
 ```bash
 mkdir auth-server && cd auth-server
 mkdir -p src
-mkdir -p ./src/{routes,controller,domain}
+mkdir -p ./src/{routes,controllers,domain}
 mkdir -p ./__tests__
 touch ./src/{config.js,app.js,service.js}
 touch ./routes/auth_routes.js
-touch ./controller/auth_controller.js
+touch ./controllers/auth_controller.js
 touch ./domain/auth_handler.js
 touch .env .env.test
 ```
@@ -86,8 +86,8 @@ EOF
 
 ## Controller <heredoc
 ```bash
-mkdir -p ./src/controller
-cat > ./src/controller/auth_controller.js << 'EOF'
+mkdir -p ./src/controllers
+cat > ./src/controllers/auth_controller.js << 'EOF'
 EOF
 ```
 
