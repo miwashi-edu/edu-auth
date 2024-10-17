@@ -35,7 +35,7 @@ npm pkg set jest.runner="groups"
 ```bash
 mkdir -p ./src
 cat > ./src/service.js << 'EOF'
-const { PORT } = require('./config');
+const { PORT, AUTH, AUTH_TYPES, HTTP_ONLY, SECURE, SAME_SITE} = require('./config');
 const app =require('./app');
 
 
@@ -44,6 +44,10 @@ app.listen(PORT, err => {
         console.error(`Failed to start the server: ${err}`);
     } else {
         console.log(`Auth Server Listening on port ${PORT}`);
+        console.log(`Using ${AUTH} authentication!`);
+        console.log(`HTTPOnly is ${HTTP_ONLY}!`);
+        console.log(`Secure is ${SECURE}!`);
+        console.log(`Same Site is ${SAME_SITE}!`);
     }
 });
 EOF
@@ -67,13 +71,21 @@ const AUTH_TYPES = {
     NONE: "None"
 };
 
+const SAME_SITE_TYPES = {
+    STRICT: "Strict",
+    LAX: "Lax",
+    NONE: "None"
+};
+
 const PORT = process.env.PORT || 3000;
 const HOST = process.env.HOST || 'localhost';
 const SECURE = process.env.NODE_ENV === 'production';
 const HTTP_ONLY = process.env.HTTP_ONLY || false;
 
 const AUTH = AUTH_TYPES[(process.env.AUTH || 'NONE').toUpperCase()] || AUTH_TYPES.NONE;
-module.exports = {HOST,PORT,SECURE,HTTP_ONLY,AUTH,AUTH_TYPES,ACCESS_TOKEN_SECRET,REFRESH_TOKEN_SECRET};
+const SAME_SITE = SAME_SITE_TYPES[(process.env.SAME_SITE || 'NONE').toUpperCase()] || SAME_SITE_TYPES.NONE;
+
+module.exports = {HOST,PORT,SECURE,HTTP_ONLY,AUTH,AUTH_TYPES,SAME_SITE,SAME_SITE_TYPES,ACCESS_TOKEN_SECRET,REFRESH_TOKEN_SECRET};
 EOF
 ```
 
@@ -84,12 +96,19 @@ EOF
 mkdir -p ./src
 cat > ./src/app.js << 'EOF'
 const express = require('express');
+const { AUTH, AUTH_TYPES } = require('./config');
 const app = express();
-
 app.use(express.json());
-app.use((req,res,next)=>{
-    res.send({});
-})
+const authRouter = {
+    [AUTH_TYPES.BASIC]: require('./routes/basic_auth_routes'),
+    [AUTH_TYPES.BEARER]: require('./routes/bearer_auth_routes'),
+    [AUTH_TYPES.DIGEST]: require('./routes/digest_auth_routes'),
+    [AUTH_TYPES.CUSTOM]: require('./routes/custom_auth_routes'),
+    [AUTH_TYPES.NONE]: require('./routes/auth_routes'),
+}[AUTH] || require('./routes/defaultAuthRouter');
+
+app.use('/api/auth', authRouter);
+app.use((req, res) => res.status(404).send('Not Found'));
 
 module.exports = app;
 EOF
@@ -101,6 +120,14 @@ EOF
 ```bash
 mkdir -p ./src/routes
 cat > ./src/routes/auth_routes.js << 'EOF'
+const express = require('express');
+const authController = require("../controllers/auth_controller");
+const router = express.Router();
+
+router.post('/login', authController.nologinLogin);
+router.get('/login', authController.nologinLogin);
+
+module.exports = router;
 EOF
 ```
 
@@ -108,6 +135,56 @@ EOF
 ```bash
 mkdir -p ./src/controllers
 cat > ./src/controllers/auth_controller.js << 'EOF'
+const {SECURE, HTTP_ONLY, SAME_SITE } = require("../config");
+const {generateAccessToken, generateRefreshToken, generateCsrfToken}  = require('../domain/auth_handler');
+exports.basicLogin = (req, res) => {
+    res.status(200).send("Basic login successful");
+};
+
+exports.bearerLogin = (req, res) => {
+    res.status(200).send("Bearer token provided");
+};
+
+exports.refreshToken = (req, res) => {
+    res.status(200).send("Bearer token refreshed");
+};
+
+exports.digestLogin = (req, res) => {
+    res.status(200).send("Digest login successful");
+};
+
+exports.customLogin = (req, res) => {
+    res.status(200).send("Custom login successful");
+};
+
+exports.nologinLogin = (req, res) => {
+    const user = req.body || { user: 'user@example.com' };
+
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
+    const csrfToken = generateCsrfToken();
+
+    res.cookie('accessToken', accessToken, {
+        httpOnly: HTTP_ONLY,
+        secure: SECURE,
+        maxAge: 15 * 60 * 1000,
+        sameSite: SAME_SITE
+    });
+
+    res.cookie('refreshToken', refreshToken, {
+        httpOnly: HTTP_ONLY,
+        secure: SECURE,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        path: '/refresh',
+        sameSite: SAME_SITE
+    });
+
+    res.json({ csrfToken });
+}
+
+exports.logout = (req, res) => {
+    res.status(200).send("Logout successful");
+}
 EOF
 ```
 
@@ -115,6 +192,24 @@ EOF
 ```bash
 mkdir -p ./src/domain
 cat > ./src/domain/auth_handler.js << 'EOF'
+const {ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET} = require('../config');
+
+const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
+
+const generateAccessToken = (user) => {
+    return jwt.sign(user, ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
+};
+
+const generateRefreshToken = (user) => {
+    return jwt.sign(user, REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
+};
+
+const generateCsrfToken = () => {
+    return crypto.randomBytes(16).toString('hex');
+};
+
+module.exports = { generateAccessToken, generateRefreshToken, generateCsrfToken };
 EOF
 ```
 
