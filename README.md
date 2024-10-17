@@ -99,6 +99,11 @@ const express = require('express');
 const { AUTH, AUTH_TYPES } = require('./config');
 const app = express();
 app.use(express.json());
+
+app.get('/', (req,res) => {
+    res.send({});
+});
+
 const authRouter = {
     [AUTH_TYPES.BASIC]: require('./routes/basic_auth_routes'),
     [AUTH_TYPES.BEARER]: require('./routes/bearer_auth_routes'),
