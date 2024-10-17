@@ -56,6 +56,9 @@ mkdir -p ./src
 cat > ./src/config.js << 'EOF'
 require('dotenv').config();
 
+const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET || 'your_access_token_secret_here';
+const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET || 'your_refresh_token_secret_here';
+
 const AUTH_TYPES = {
     BASIC: "Basic",
     BEARER: "Bearer",
@@ -70,9 +73,7 @@ const SECURE = process.env.NODE_ENV === 'production';
 const HTTP_ONLY = process.env.HTTP_ONLY || false;
 
 const AUTH = AUTH_TYPES[(process.env.AUTH || 'NONE').toUpperCase()] || AUTH_TYPES.NONE;
-
-module.exports = {HOST,PORT,SECURE,HTTP_ONLY,AUTH,AUTH_TYPES
-};
+module.exports = {HOST,PORT,SECURE,HTTP_ONLY,AUTH,AUTH_TYPES,ACCESS_TOKEN_SECRET,REFRESH_TOKEN_SECRET};
 EOF
 ```
 
