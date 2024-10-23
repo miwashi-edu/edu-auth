@@ -292,6 +292,8 @@ EOF
 
 ### Docker
 
+[Alpine](https://alpinelinux.org/)
+
 ```Docker
 cat > Dockerfile << 'EOF'
 # Use an official Node runtime as a parent image
@@ -342,11 +344,10 @@ docker stop fwk-auth
 docker rm fwk-auth
 docker image rm auth-server
 docker build -t auth-server .
+```
 
 #### Visit your running docker image (your virtual machine)
 
 ```bash
-docker exec -it fwk-auth /bin/bash
-
-ctrl-d #exit to real machine
+docker exec -it fwk-auth /bin/bash # ctrl-d - exit back to real machine
 ```
