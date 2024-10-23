@@ -344,7 +344,7 @@ docker build -t auth-server .
 docker image ls
 docker network create --subnet=172.20.0.0/24 fwk-net
 docker network ls
-docker run --name fwk-auth --network  --ip 172.20.0.2 fwk-net -p 3000:3000 -d auth-server
+docker run --name fwk-auth --network fwk-net --ip 172.20.0.2 -p 3000:3000 -d auth-server
 docker ps
 docker inspect fwk-net
 ```
@@ -383,45 +383,20 @@ EOF
 
 ```bash
 cat > Dockerfile << 'EOF'
-# Stage 1: Build the application
-FROM node:18-alpine as build
-
-# Set the working directory in the container
-WORKDIR /app
-
-# Copy package.json and package-lock.json
-COPY package*.json ./
-
-# Install dependencies
-RUN npm install
-
-# Copy the rest of your app's source code from your host to your image filesystem.
-COPY . .
-
-# Build the project to the `dist` directory
-RUN npm run build
-
-# Stage 2: Serve the application using Vite Preview
 FROM node:18-alpine
 
-# Set the working directory where we'll be running the server
-WORKDIR /app
+WORKDIR /usr/src/app
 
-# Install Vite globally to use the preview feature
-RUN npm install -g vite
+COPY . .
 
-# Copy built assets from the build stage
-COPY --from=build /app/dist /app
+RUN npm install
 
-# Set environment variables
-ENV VITE_AUTH_URL=http://172.20.0.2:3000
+ENV VITE_LOGIN_URL=http://172.20.0.2:3000
 ENV VITE_DOMAIN_URL=http://172.20.0.4:3000
 
-# Expose the port Vite preview will run on
 EXPOSE 5000
 
-# Command to serve the app using Vite's preview feature
-CMD ["vite", "preview", "--port", "5000", "--host"]
+CMD ["npm", "run", "preview"]
 EOF
 ```
 
