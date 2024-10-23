@@ -294,6 +294,18 @@ EOF
 
 [Alpine](https://alpinelinux.org/)
 
+#### .dockerignore <heredoc
+
+```bash
+cat > .dockerignore << 'EOF'
+node_modules
+build
+dist
+.git
+EOF
+```
+#### Dockerfile <heredoc
+
 ```bash
 cat > Dockerfile << 'EOF'
 # Use an official Node runtime as a parent image
@@ -356,38 +368,70 @@ docker exec -it fwk-auth /bin/bash # ctrl-d - exit back to real machine
 
 > This is for a React app built with Vite.
 
+#### .dockerignore <heredoc
+
 ```bash
-cat > Dockerfile << 'EOF'
-# Use an official Node runtime as a parent image
-FROM node:18-alpine
-
-# Install bash (if necessary for your workflow)
-RUN apk update && apk add --no-cache bash
-
-# Set the working directory in the container
-WORKDIR /usr/src/app
-
-# Copy package.json and package-lock.json (or yarn.lock) into the working directory
-COPY package*.json ./
-
-# Install any needed packages specified in package.json
-RUN npm install
-
-# Bundle app source inside Docker image
-COPY . .
-
-# Build the React application using Vite
-RUN npm run build
-
-# Make port 3000 available to the world outside this container
-EXPOSE 3000
-
-# Define environment variable for use within Vite application
-ENV VITE_PORT=3000
-
-# Command to preview the app using Vite's built-in static server
-CMD ["npm", "run", "preview"]
+cat > .dockerignore << 'EOF'
+node_modules
+build
+dist
+.git
 EOF
 ```
+
+#### Dockerfile <heredoc
+
+```bash
+cat > Dockerfile << 'EOF'
+# Stage 1: Build the application
+FROM node:18-alpine as build
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy package.json and package-lock.json
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy the rest of your app's source code from your host to your image filesystem.
+COPY . .
+
+# Build the project to the `dist` directory
+RUN npm run build
+
+# Stage 2: Serve the application using Vite Preview
+FROM node:18-alpine
+
+# Set the working directory where we'll be running the server
+WORKDIR /app
+
+# Install Vite globally to use the preview feature
+RUN npm install -g vite
+
+# Copy built assets from the build stage
+COPY --from=build /app/dist /app
+
+# Set environment variables
+ENV VITE_AUTH_URL=http://172.20.0.2:3000
+ENV VITE_DOMAIN_URL=http://172.20.0.4:3000
+
+# Expose the port Vite preview will run on
+EXPOSE 5000
+
+# Command to serve the app using Vite's preview feature
+CMD ["vite", "preview", "--port", "5000", "--host"]
+EOF
+```
+
+### Build & Run the Image connect port 3001 to it
+
+```bash
+docker build -t frontend .
+docker run --name fwk-front --network fwk-net --ip 172.20.0.3 -p 3001:5000 -d frontend
+```
+
+
 
 
