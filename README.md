@@ -378,14 +378,15 @@ dist
 .git
 EOF
 ```
-
 #### Dockerfile <heredoc
 
 ```bash
 cat > Dockerfile << 'EOF'
 FROM node:18-alpine
 
-WORKDIR /usr/src/app
+COPY package.json .
+
+WORKDIR /app
 
 COPY . .
 
@@ -397,6 +398,30 @@ ENV VITE_DOMAIN_URL=http://172.20.0.4:3000
 EXPOSE 5000
 
 CMD ["npm", "run", "preview"]
+EOF
+```
+
+#### vite.config.js <heredoc
+
+```bash
+cat > vite.config.js << 'EOF'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+
+export default defineConfig({
+  base: "/",
+  plugins: [react()],
+  preview: {
+    port: 5000,
+    strictPort: true,
+  },
+  server: {
+    port: 5000,
+    strictPort: true,
+    host: true,
+    origin: "http://0.0.0.0:5000",
+  },
+});
 EOF
 ```
 
