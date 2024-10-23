@@ -293,6 +293,7 @@ EOF
 ### Docker
 
 ```Docker
+cat > Dockerfile << 'EOF'
 # Use an official Node runtime as a parent image
 FROM node:16-alpine
 
@@ -316,6 +317,7 @@ ENV PORT 3000
 
 # Run the app when the container launches
 CMD ["node", "src/service.js"]
+EOF
 ```
 
 ```bash
