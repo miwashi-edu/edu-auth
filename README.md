@@ -297,7 +297,7 @@ EOF
 ```Docker
 cat > Dockerfile << 'EOF'
 # Use an official Node runtime as a parent image
-FROM node:16-alpine
+FROM node:18-alpine
 
 # Install bash
 RUN apk update && apk add --no-cache bash
