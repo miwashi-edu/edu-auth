@@ -330,9 +330,9 @@ EOF
 ```bash
 docker build -t auth-server .
 docker image ls
-docker network create --subnet=172.18.0.0/16 fwk-net
+docker network create --subnet=172.20.0.0/24 fwk-net
 docker network ls
-docker run --name fwk-auth --network  --ip 172.18.0.2 fwk-net -p 3000:3000 -d auth-server
+docker run --name fwk-auth --network  --ip 172.20.0.2 fwk-net -p 3000:3000 -d auth-server
 docker ps
 docker inspect fwk-net
 ```
