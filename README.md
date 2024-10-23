@@ -298,7 +298,7 @@ cat > Dockerfile << 'EOF'
 FROM node:16-alpine
 
 # Install bash
-RUN apt-get update && apt-get install -y bash
+RUN apk update && apk add --no-cache bash
 
 # Set the working directory in the container
 WORKDIR /usr/src/app
@@ -341,7 +341,7 @@ docker inspect fwk-net
 docker stop fwk-auth
 docker rm fwk-auth
 docker image rm auth-server
-docker build -t auth-server
+docker build -t auth-server .
 
 #### Visit your running docker image (your virtual machine)
 
