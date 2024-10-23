@@ -290,11 +290,11 @@ describe('When testing /', () => {
 EOF
 ```
 
-### Docker
+### Docker <heredoc
 
 [Alpine](https://alpinelinux.org/)
 
-```Docker
+```bash
 cat > Dockerfile << 'EOF'
 # Use an official Node runtime as a parent image
 FROM node:18-alpine
@@ -318,7 +318,7 @@ COPY . .
 EXPOSE 3000
 
 # Define environment variable
-ENV PORT 3000
+ENV PORT=3000
 
 # Run the app when the container launches
 CMD ["node", "src/service.js"]
@@ -351,3 +351,43 @@ docker build -t auth-server .
 ```bash
 docker exec -it fwk-auth /bin/bash # ctrl-d - exit back to real machine
 ```
+
+### Dockerfile for frontend < heredoc
+
+> This is for a React app built with Vite.
+
+```bash
+cat > Dockerfile << 'EOF'
+# Use an official Node runtime as a parent image
+FROM node:18-alpine
+
+# Install bash (if necessary for your workflow)
+RUN apk update && apk add --no-cache bash
+
+# Set the working directory in the container
+WORKDIR /usr/src/app
+
+# Copy package.json and package-lock.json (or yarn.lock) into the working directory
+COPY package*.json ./
+
+# Install any needed packages specified in package.json
+RUN npm install
+
+# Bundle app source inside Docker image
+COPY . .
+
+# Build the React application using Vite
+RUN npm run build
+
+# Make port 3000 available to the world outside this container
+EXPOSE 3000
+
+# Define environment variable for use within Vite application
+ENV VITE_PORT=3000
+
+# Command to preview the app using Vite's built-in static server
+CMD ["npm", "run", "preview"]
+EOF
+```
+
+
