@@ -297,6 +297,9 @@ cat > Dockerfile << 'EOF'
 # Use an official Node runtime as a parent image
 FROM node:16-alpine
 
+# Install bash
+RUN apt-get update && apt-get install -y bash
+
 # Set the working directory in the container
 WORKDIR /usr/src/app
 
@@ -320,9 +323,30 @@ CMD ["node", "src/service.js"]
 EOF
 ```
 
+#### Build and run your image
+
 ```bash
-docker build Dockerfile
+docker build -t auth-server .
+docker image ls
+docker network create fwk-net
+docker network ls
+docker run --name fwk-auth --network fwk-net -p 3000:3000 -d auth-server
+docker ps
+docker inspect fwk-net
 ```
 
+#### Rebuild your image and run it
 
+```bash
+docker stop fwk-auth
+docker rm fwk-auth
+docker image rm auth-server
+docker build -t auth-server
 
+#### Visit your running docker image (your virtual machine)
+
+```bash
+docker exec -it fwk-auth /bin/bash
+
+ctrl-d #exit to real machine
+```
