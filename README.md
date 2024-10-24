@@ -16,7 +16,7 @@ touch ./src/routes/bearer_auth_routes.js
 touch ./src/routes/custom_auth_routes.js
 touch ./src/routes/digest_auth_routes.js
 touch ./src/controllers/auth_controller.js
-touch ./src./domain/auth_handler.js
+touch ./src/domain/auth_handler.js
 touch .env .env.test
 ```
 
