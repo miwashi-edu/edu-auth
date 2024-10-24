@@ -10,13 +10,13 @@ mkdir -p src
 mkdir -p ./src/{routes,controllers,domain}
 mkdir -p ./__tests__
 touch ./src/{config.js,app.js,service.js}
-touch ./src./routes/auth_routes.js
-touch ./src./routes/basic_auth_routes.js
-touch ./src./routes/bearer_auth_routes.js
-touch ./src./routes/custom_auth_routes.js
-touch ./src./routes/digest_auth_routes.js
-touch ./src./controllers/auth_controller.js
-touch ./domain/auth_handler.js
+touch ./src/routes/auth_routes.js
+touch ./src/routes/basic_auth_routes.js
+touch ./src/routes/bearer_auth_routes.js
+touch ./src/routes/custom_auth_routes.js
+touch ./src/routes/digest_auth_routes.js
+touch ./src/controllers/auth_controller.js
+touch ./src./domain/auth_handler.js
 touch .env .env.test
 ```
 
